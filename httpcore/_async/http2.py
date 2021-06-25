@@ -209,7 +209,8 @@ class AsyncHTTP2Connection(AsyncBaseHTTPConnection):
             logger.trace("receive_event stream_id=%r event=%s", event_stream_id, event)
 
             if hasattr(event, "error_code"):
-                raise RemoteProtocolError(event)
+                await self.aclose() # Mitigate Free5GC weird HTTP/2 stack
+                #raise RemoteProtocolError(event)
 
             if event_stream_id in self.events:
                 self.events[event_stream_id].append(event)
